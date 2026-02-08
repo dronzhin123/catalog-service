@@ -1,0 +1,42 @@
+server:
+  port: 8110
+
+spring:
+  application:
+    name: catalog-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog_service_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+amqp:
+  exchange-name: borrowing
+  borrow-book-message-properties:
+    queue-name: borrow.book.queue
+    routing-key: borrow.book
+  return-book-message-properties:
+    queue-name: return.book.queue
+    routing-key: return.book
+  book-borrowed-message-properties:
+    routing-key: book.borrowed
+  book-returned-message-properties:
+    routing-key: book.returned

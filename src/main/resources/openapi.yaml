@@ -1,0 +1,141 @@
+openapi: 3.0.3
+
+info:
+  title: Catalog Service API
+  version: 1.0.0
+
+servers:
+  - url: /v1
+
+paths:
+  /books/{id}:
+    get:
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { $ref: '#/components/schemas/BookResponse' } } }
+        '400':
+          description: Bad Request
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '404':
+          description: Not Found
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '500':
+          description: Internal Server Error
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+
+  /books:
+    get:
+      operationId: getBookPage
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, default: 0 }
+        - name: size
+          in: query
+          required: false
+          schema: { type: integer, default: 10 }
+        - name: name
+          in: query
+          required: false
+          schema: { type: string }
+        - name: author
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { $ref: '#/components/schemas/BookListResponse' } } }
+        '400':
+          description: Bad Request
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '500':
+          description: Internal Server Error
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+
+    post:
+      operationId: createBook
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CreateBookRequest' } } }
+
+      responses:
+        '201':
+          description: Created
+          content: { application/json: { schema: { $ref: '#/components/schemas/BookResponse' } } }
+        '400':
+          description: Bad Request
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '409':
+          description: Conflict
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '500':
+          description: Internal Server Error
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+
+  /books/{id}/stock:
+    patch:
+      operationId: restockBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RestockBookRequest' } } }
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { $ref: '#/components/schemas/BookResponse' } } }
+        '400':
+          description: Bad Request
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '404':
+          description: Not Found
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+        '500':
+          description: Internal Server Error
+          content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } }
+
+components:
+  schemas:
+    CreateBookRequest:
+      type: object
+      required: [ name, author ]
+      properties:
+        name: { type: string }
+        author: { type: string }
+
+    RestockBookRequest:
+      type: object
+      required: [ quantity ]
+      properties:
+        quantity: { type: integer }
+
+    BookResponse:
+      type: object
+      required: [ id, name, author, quantity ]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        author: { type: string }
+        quantity: { type: integer }
+
+    BookListResponse:
+      type: array
+      items: { $ref: '#/components/schemas/BookResponse' }
+
+    ErrorResponse:
+      type: object
+      required: [ message ]
+      properties:
+        message: { type: string }

@@ -8,9 +8,9 @@ import lombok.*;
 @AllArgsConstructor @NoArgsConstructor @Builder
 public class Book {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String author;
+    private Long id;
+    private String name;
+    private String author;
     @Builder.Default
-    Integer quantity = 0;
+    private Integer quantity = 0;
 }
